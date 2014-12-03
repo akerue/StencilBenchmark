@@ -7,6 +7,7 @@ import java.util.Random;
 public class StencilCommunication {
     public int rank;
     public int nprocess;
+    public int loop_count;
     private static int num_neigh = 4;
     private int ndims;
     private boolean reorder = true;
@@ -23,9 +24,10 @@ public class StencilCommunication {
 
     Random R = new Random(SEED);
 
-    public StencilCommunication(int rank, int nprocess) {
+    public StencilCommunication(int rank, int nprocess, int loop_count) {
         this.rank = rank;
         this.nprocess = nprocess;
+        this.loop_count = loop_count;
         this.ndims = 2;
         dims = new int[ndims];
         periods = new boolean[ndims];
@@ -91,11 +93,10 @@ public class StencilCommunication {
 
     public void run() throws MPIException{
         setUpBenchmark();
-        final int COUNT = 1000000;
         if (rank == 0) {
             T.start();
         }
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < loop_count; i++) {
             kernel();
         }
         if (rank == 0) {
